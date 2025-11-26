@@ -53,6 +53,35 @@
   .empty{border:1px dashed var(--line);border-radius:12px;padding:16px;color:var(--muted);text-align:center;margin-top:10px}
   .divider{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px;margin:12px 0}
   .divider:before,.divider:after{content:"";flex:1;height:1px;background:var(--line)}
+    .mini-popup {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  }
+  .mini-popup.active { display: flex; }
+  .mini-box {
+    background: #fff;
+    padding: 20px 24px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,.1);
+    max-width: 360px;
+    text-align: center;
+    font-size: 15px;
+    color: var(--ink);
+  }
+  .mini-box button {
+    margin-top: 14px;
+    padding: 8px 18px;
+    border-radius: 8px;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: #fff;
+    cursor: pointer;
+  }
 </style>
 </head>
 <body>
@@ -96,38 +125,77 @@
     <div class="selected hidden"><span class="label" style="font-weight:600">Selected:</span> <span class="filename"></span><span style="margin-left:auto"></span><a class="btn small outline change" href="#lib-docket">Change</a><button class="btn small outline remove" type="button">Remove</button></div>
   </article>
 
-  <article class="doc-card" id="vendor">
+  <article class="doc-card" id="otherdocs">
     <div class="doc-hd">
-      <div class="doc-title">Vendor Engagement Letter</div>
-      <div class="doc-meta">1 on file</div>
+      <div class="doc-title">Other Document Types</div>
+      <div class="doc-meta">Upload any supporting files</div>
     </div>
-    <div class="actions">
-      <a class="btn" href="#lib-vendor">Select From Library</a>
+ 
+    <div class="dropzone">
+      <label>
+        <input type="file">
+        <div class="dz-title">Upload file</div>
+        <div class="dz-sub">PDF, JPEG, PNG, DOCX, XLSX (≤ 15MB)</div>
+      </label>
     </div>
-    <div class="dropzone"><label><input type="file"><div class="dz-title">Upload file</div><div class="dz-sub">PDF, JPEG or PNG (≤ 15MB)</div></label></div>
-    <div class="selected hidden"><span class="label" style="font-weight:600">Selected:</span> <span class="filename"></span><span style="margin-left:auto"></span><a class="btn small outline change" href="#lib-vendor">Change</a><button class="btn small outline remove" type="button">Remove</button></div>
-  </article>
-</div>
+    <div class="selected hidden">
+      <span class="label" style="font-weight:600">Selected:</span>
+      <span class="filename"></span>
+      <span style="margin-left:auto"></span>
+      <a class="btn small outline change" href="#lib-otherdocs">Change</a>
+      <button class="btn small outline remove" type="button">Remove</button>
+    </div>
+</article>
 
+</div>
+<!-- MINI POPUP -->
+<div id="mini-popup" class="mini-popup">
+  <div class="mini-box">
+    <p>This should open the same upload pop box in the asset library page</p>
+    <button class="mini-close">OK</button>
+  </div>
+</div>
 <!-- RIGHT DRAWERS -->
-<div id="lib-discovery" class="overlay">
+<div id="lib-otherdocs" class="overlay">
   <aside class="sheet">
     <header>
-      <span class="t">Asset Library — Discovery Documents</span>
+      <span class="t">Asset Library — Other Document Types</span>
       <span class="close" data-close>Close</span>
     </header>
+
     <div class="body">
-      <div class="search"><input placeholder="Search discovery…"><button class="btn">Search</button></div>
+
       <div class="list">
-        <div class="item"><div>Interrogatories_Pl_01.pdf<br><span class="meta">1.2MB • Jun 14, 2025</span></div><span class="badge">Choose</span></div>
-        <div class="item"><div>Responses_Def_01.pdf<br><span class="meta">980KB • Jun 22, 2025</span></div><span class="badge">Choose</span></div>
-        <div class="item"><div>Production_Log_v3.xlsx<br><span class="meta">860KB • May 29, 2025</span></div><span class="badge">Choose</span></div>
+        <div class="item">
+          <div>Notes_Attachment.docx<br><span class="meta">420KB • Aug 3, 2025</span></div>
+          <span class="badge">Choose</span>
+        </div>
+
+        <div class="item">
+          <div>Financial_Report_Q2.xlsx<br><span class="meta">1.1MB • Jul 21, 2025</span></div>
+          <span class="badge">Choose</span>
+        </div>
+
+        <div class="item">
+          <div>Support_Image_01.png<br><span class="meta">680KB • Apr 9, 2025</span></div>
+          <span class="badge">Choose</span>
+        </div>
       </div>
-      <div class="divider">or upload a new file</div>
-      <div class="dropzone"><label><input type="file"><div class="dz-title">Upload discovery file</div><div class="dz-sub">PDF/JPEG/PNG • ≤ 15MB</div></label></div>
+
+      <div class="divider">or upload new</div>
+
+      <div class="dropzone">
+        <label>
+          <input type="file">
+          <div class="dz-title">Upload file</div>
+          <div class="dz-sub">PDF/JPEG/PNG/DOCX/XLSX • ≤ 15MB</div>
+        </label>
+      </div>
     </div>
+
   </aside>
 </div>
+
 
 <div id="lib-complaint" class="overlay">
   <aside class="sheet">
@@ -244,6 +312,19 @@
     btn.addEventListener('click',function(){ clearSelection(btn.closest('.doc-card')); });
   });
 })();
+
+// --- CUSTOM: Other Document Types upload popup ---
+document.querySelector('#otherdocs .dropzone').addEventListener('click', function(e){
+  e.preventDefault();   // prevent real file input from opening
+  e.stopPropagation();
+  document.getElementById('mini-popup').classList.add('active');
+});
+
+// Close popup
+document.querySelector('#mini-popup .mini-close').addEventListener('click', function(){
+  document.getElementById('mini-popup').classList.remove('active');
+});
+
 </script>
 </body>
 </html>
