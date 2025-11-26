@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Option 9 – Standalone Dual-Source Uploader (Right Drawer) – Interactive</title>
+<style>
+  :root { --bg:#f6f8fb; --card:#ffffff; --ink:#243048; --muted:#7781a1; --accent:#0F2D56; --line:#e6ebf2; --shadow:0 8px 30px rgba(17, 34, 68, .08); --radius:14px; }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font:16px/1.4 "Segoe UI",system-ui,-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif}
+  .wrap{max-width:820px;margin:32px auto;padding:0 16px}
+  h1{font-size:28px;margin:8px 0;font-weight:700;text-align:center}
+  p.lead{color:var(--muted);text-align:center;margin:0 auto 24px;max-width:640px}
+
+  .doc-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:20px}
+  .doc-hd{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+  .doc-title{font-size:18px;font-weight:700}
+  .doc-meta{margin-left:auto;color:var(--muted);font-size:13px}
+
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+  .btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--accent);background:var(--accent);border-radius:10px;padding:10px 12px;color:#fff;text-decoration:none;cursor:pointer}
+  .btn.small{padding:8px 10px;font-size:14px}
+  .btn.outline{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+
+  .dropzone{border:2px dashed var(--line);border-radius:12px;padding:18px;text-align:center;color:var(--muted);transition:border-color .2s, background .2s}
+  .dropzone:hover{border-color:var(--accent);background:linear-gradient(0deg,#f9fbff,#fff)}
+  .dropzone input[type="file"]{display:none}
+  .dz-title{font-weight:600;color:var(--ink)}
+  .dz-sub{font-size:12px;color:var(--muted)}
+
+  .selected{border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 12px;margin-top:10px;display:flex;align-items:center;gap:10px}
+  .hidden{display:none}
+
+  /* Right drawer (Option 9 behavior) */
+  .overlay{position:fixed;inset:0;background:rgba(20,30,50,.45);opacity:0;pointer-events:none;transition:opacity .2s}
+  .overlay.active{opacity:1;pointer-events:auto}
+  .sheet{position:fixed;right:0;top:0;height:100%;width:min(440px,92vw);background:#fff;border-left:1px solid var(--line);box-shadow:var(--shadow);transform:translateX(100%);transition:transform .25s}
+  .overlay.active .sheet{transform:translateX(0)}
+  .sheet header{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;gap:8px;align-items:center}
+  .sheet header .t{font-weight:700}
+  .sheet .close{margin-left:auto;color:var(--muted);text-decoration:none;cursor:pointer}
+  .sheet .body{padding:14px 16px}
+
+  .search{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .search input{flex:1;border:0;padding:10px 12px}
+  .search .btn{border:0;border-left:1px solid var(--line);border-radius:0}
+
+  .list{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-top:10px}
+  .list .item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-top:1px solid var(--line);cursor:pointer}
+  .list .item:first-child{border-top:0}
+  .item .meta{font-size:12px;color:var(--muted)}
+  .item .badge{margin-left:auto;font-size:12px;color:#fff;background:var(--accent);padding:2px 8px;border-radius:999px}
+  .empty{border:1px dashed var(--line);border-radius:12px;padding:16px;color:var(--muted);text-align:center;margin-top:10px}
+  .divider{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px;margin:12px 0}
+  .divider:before,.divider:after{content:"";flex:1;height:1px;background:var(--line)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Attach Supporting Documents</h1>
+  <p class="lead">Select from your Asset Library or upload a new file for each document type.</p>
+
+  <article class="doc-card" id="discovery">
+    <div class="doc-hd">
+      <div class="doc-title">Discovery Documents</div>
+      <div class="doc-meta">3 on file</div>
+    </div>
+    <div class="actions">
+      <a class="btn" href="#lib-discovery">Select From Library</a>
+    </div>
+    <div class="dropzone"><label><input type="file"><div class="dz-title">Upload file</div><div class="dz-sub">PDF, JPEG or PNG (≤ 15MB)</div></label></div>
+    <div class="selected hidden"><span class="label" style="font-weight:600">Selected:</span> <span class="filename"></span><span style="margin-left:auto"></span><a class="btn small outline change" href="#lib-discovery">Change</a><button class="btn small outline remove" type="button">Remove</button></div>
+  </article>
+
+  <article class="doc-card" id="complaint">
+    <div class="doc-hd">
+      <div class="doc-title">Complaint or Case Filing</div>
+      <div class="doc-meta">No files yet</div>
+    </div>
+    <div class="actions">
+      <a class="btn" href="#lib-complaint">Select From Library</a>
+    </div>
+    <div class="dropzone"><label><input type="file"><div class="dz-title">Upload file</div><div class="dz-sub">PDF, JPEG or PNG (≤ 15MB)</div></label></div>
+    <div class="selected hidden"><span class="label" style="font-weight:600">Selected:</span> <span class="filename"></span><span style="margin-left:auto"></span><a class="btn small outline change" href="#lib-complaint">Change</a><button class="btn small outline remove" type="button">Remove</button></div>
+  </article>
+
+  <article class="doc-card" id="docket">
+    <div class="doc-hd">
+      <div class="doc-title">Case Docket</div>
+      <div class="doc-meta">2 on file</div>
+    </div>
+    <div class="actions">
+      <a class="btn" href="#lib-docket">Select From Library</a>
+    </div>
+    <div class="dropzone"><label><input type="file"><div class="dz-title">Upload file</div><div class="dz-sub">PDF, JPEG or PNG (≤ 15MB)</div></label></div>
+    <div class="selected hidden"><span class="label" style="font-weight:600">Selected:</span> <span class="filename"></span><span style="margin-left:auto"></span><a class="btn small outline change" href="#lib-docket">Change</a><button class="btn small outline remove" type="button">Remove</button></div>
+  </article>
+
+  <article class="doc-card" id="vendor">
+    <div class="doc-hd">
+      <div class="doc-title">Vendor Engagement Letter</div>
+      <div class="doc-meta">1 on file</div>
+    </div>
+    <div class="actions">
+      <a class="btn" href="#lib-vendor">Select From Library</a>
+    </div>
+    <div class="dropzone"><label><input type="file"><div class="dz-title">Upload file</div><div class="dz-sub">PDF, JPEG or PNG (≤ 15MB)</div></label></div>
+    <div class="selected hidden"><span class="label" style="font-weight:600">Selected:</span> <span class="filename"></span><span style="margin-left:auto"></span><a class="btn small outline change" href="#lib-vendor">Change</a><button class="btn small outline remove" type="button">Remove</button></div>
+  </article>
+</div>
+
+<!-- RIGHT DRAWERS -->
+<div id="lib-discovery" class="overlay">
+  <aside class="sheet">
+    <header>
+      <span class="t">Asset Library — Discovery Documents</span>
+      <span class="close" data-close>Close</span>
+    </header>
+    <div class="body">
+      <div class="search"><input placeholder="Search discovery…"><button class="btn">Search</button></div>
+      <div class="list">
+        <div class="item"><div>Interrogatories_Pl_01.pdf<br><span class="meta">1.2MB • Jun 14, 2025</span></div><span class="badge">Choose</span></div>
+        <div class="item"><div>Responses_Def_01.pdf<br><span class="meta">980KB • Jun 22, 2025</span></div><span class="badge">Choose</span></div>
+        <div class="item"><div>Production_Log_v3.xlsx<br><span class="meta">860KB • May 29, 2025</span></div><span class="badge">Choose</span></div>
+      </div>
+      <div class="divider">or upload a new file</div>
+      <div class="dropzone"><label><input type="file"><div class="dz-title">Upload discovery file</div><div class="dz-sub">PDF/JPEG/PNG • ≤ 15MB</div></label></div>
+    </div>
+  </aside>
+</div>
+
+<div id="lib-complaint" class="overlay">
+  <aside class="sheet">
+    <header>
+      <span class="t">Asset Library — Complaint or Filing</span>
+      <span class="close" data-close>Close</span>
+    </header>
+    <div class="body">
+      <div class="empty">No complaint filings found for this matter.</div>
+      <div class="divider">upload new</div>
+      <div class="dropzone"><label><input type="file"><div class="dz-title">Upload complaint</div><div class="dz-sub">PDF/JPEG/PNG • ≤ 15MB</div></label></div>
+    </div>
+  </aside>
+</div>
+
+<div id="lib-docket" class="overlay">
+  <aside class="sheet">
+    <header>
+      <span class="t">Asset Library — Case Docket</span>
+      <span class="close" data-close>Close</span>
+    </header>
+    <div class="body">
+      <div class="list">
+        <div class="item"><div>CaseDocket_2022_Q4.pdf<br><span class="meta">Dec 20, 2022 • 1.0MB</span></div><span class="badge">Choose</span></div>
+        <div class="item"><div>CaseDocket_2023_Q2.pdf<br><span class="meta">Jun 3, 2023 • 1.2MB</span></div><span class="badge">Choose</span></div>
+      </div>
+      <div class="divider">or upload the latest docket</div>
+      <div class="dropzone"><label><input type="file"><div class="dz-title">Upload latest docket</div><div class="dz-sub">PDF/JPEG/PNG • ≤ 15MB</div></label></div>
+    </div>
+  </aside>
+</div>
+
+<div id="lib-vendor" class="overlay">
+  <aside class="sheet">
+    <header>
+      <span class="t">Asset Library — Vendor Engagement Letter</span>
+      <span class="close" data-close>Close</span>
+    </header>
+    <div class="body">
+      <div class="list">
+        <div class="item"><div>Vendor_Engagement_Signed.pdf<br><span class="meta">Feb 12, 2025 • 420KB</span></div><span class="badge">Use</span></div>
+      </div>
+      <div class="divider">or upload a replacement</div>
+      <div class="dropzone"><label><input type="file"><div class="dz-title">Upload replacement</div><div class="dz-sub">PDF/JPEG/PNG • ≤ 15MB</div></label></div>
+    </div>
+  </aside>
+</div>
+
+<script>
+(function(){
+  function mapOverlayToCardId(overlay){
+    return (overlay.getAttribute('id')||'').replace('lib-','');
+  }
+  function showSelection(cardId, filename){
+    var card=document.getElementById(cardId); if(!card) return;
+    var dz=card.querySelector('.dropzone');
+    var selected=card.querySelector('.selected');
+    if(selected){ selected.classList.remove('hidden'); selected.querySelector('.filename').textContent=filename; }
+    if(dz){ dz.classList.add('hidden'); }
+  }
+  function clearSelection(card){
+    var dz=card.querySelector('.dropzone');
+    var selected=card.querySelector('.selected');
+    if(selected){ selected.classList.add('hidden'); selected.querySelector('.filename').textContent=''; }
+    if(dz){ dz.classList.remove('hidden'); var input=dz.querySelector('input[type=file]'); if(input) input.value=''; }
+  }
+
+  // OPEN overlays without updating the URL hash (prevents :target from keeping drawers open)
+  document.querySelectorAll('a[href^="#lib-"]').forEach(function(a){
+    a.addEventListener('click',function(e){
+      e.preventDefault();
+      var id=a.getAttribute('href').slice(1);
+      var ov=document.getElementById(id);
+      if(ov) ov.classList.add('active');
+    });
+  });
+
+  // CLOSE overlays via close button
+  document.querySelectorAll('.overlay .close').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var ov = btn.closest('.overlay');
+      if(ov) ov.classList.remove('active');
+    });
+  });
+
+  // CLOSE overlays when clicking the dimmed background
+  document.querySelectorAll('.overlay').forEach(function(ov){
+    ov.addEventListener('click', function(e){
+      if(e.target === ov){ ov.classList.remove('active'); }
+    });
+  });
+
+  // CHOOSE FROM LIBRARY
+  document.querySelectorAll('.overlay .list .item').forEach(function(item){
+    item.addEventListener('click',function(){
+      var overlay=item.closest('.overlay');
+      var cardId=mapOverlayToCardId(overlay);
+      var filename=item.innerText.split('\n')[0].trim();
+      showSelection(cardId, filename);
+      // Close the drawer immediately after choosing
+      overlay.classList.remove('active');
+    });
+  });
+
+  // UPLOAD: reflect selection on change
+  document.querySelectorAll('.doc-card .dropzone input[type=file]').forEach(function(input){
+    input.addEventListener('change',function(){
+      if(input.files && input.files[0]){ showSelection(input.closest('.doc-card').id, input.files[0].name); }
+    });
+  });
+
+  // REMOVE selections
+  document.querySelectorAll('.doc-card .selected .remove').forEach(function(btn){
+    btn.addEventListener('click',function(){ clearSelection(btn.closest('.doc-card')); });
+  });
+})();
+</script>
+</body>
+</html>
