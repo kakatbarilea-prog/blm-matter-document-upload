@@ -329,10 +329,36 @@
     cursor:pointer;
     font-size:14px;
   }
+
+.back-nav {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+  margin-bottom: 10px;
+  width: max-content;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+.back-nav:hover {
+  background: rgba(0,0,0,0.05);
+}
+
 </style>
 </head>
 <body>
 <div class="wrap">
+<!-- BACK BUTTON -->
+<div class="back-nav" onclick="window.history.back()">
+  ← Back
+</div>
+
   <h1>Attach Supporting Documents</h1>
   <p class="lead">Select from your Asset Library or upload a new file for each document type.</p>
 
