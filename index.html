@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -351,6 +353,104 @@
         background: #eef1f6;
 }
 
+/* New Compact Document Type Grid */
+.doc-type-grid {
+    display: grid;
+    gap: 18px;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    margin-top: 32px;
+}
+
+/* Make document type buttons look standalone */
+.doc-type {
+    width: 100%;
+    justify-content: center;
+    padding: 14px;
+    font-size: 16px;
+    border-radius: var(--radius);
+}
+/* Task List Style */
+#docList {
+  margin-top: 32px;
+  display: grid;
+  gap: 14px;
+}
+
+.doc-row {
+  background: #fff;
+  padding: 16px 18px;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+
+.doc-row:hover {
+  background: #F0F4FF;
+  border-color: var(--accent);
+}
+
+.doc-row .status {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+/* Success state */
+.doc-row.success {
+  border-color: #0A7A32;
+  background: #E9F8EC;
+}
+
+.doc-row.success .status {
+  color: #0A7A32;
+}
+/* Filename rename field */
+.filename-input {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 14px;
+  margin-top: 12px;
+  outline: none;
+}
+
+/* Confirm upload button inside sidebar */
+.confirm-upload-btn {
+  width: 100%;
+  margin-top: 14px;
+  padding: 12px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  font-size: 15px;
+}
+
+/* Loader */
+.loader {
+  width: 26px;
+  height: 26px;
+  border: 3px solid #eee;
+  border-top: 3px solid var(--accent);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  margin: 20px auto;
+  display: none;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 
 
 </style>
@@ -366,63 +466,30 @@
   <h1>Attach Supporting Documents</h1>
   <p class="lead">Choose files from your Legal Document Library or upload new documents as needed. These supporting materials help your legal team understand the full context of your matter, ensure accuracy, and prepare the appropriate next steps.</p>
 
-  <article class="doc-card" id="discovery">
-    <div class="doc-hd">
-      <div class="doc-title">Discovery Documents</div>
-      <div class="doc-meta">3 on file</div>
-    </div>
-    <div class="actions">
-      <a class="btn" href="#lib-discovery">Select From Library</a>
-    </div>
-    <div class="dropzone"><label><input type="file"><div class="dz-title">Upload file</div><div class="dz-sub">PDF, JPEG or PNG (≤ 15MB)</div></label></div>
-    <div class="selected hidden"><span class="label" style="font-weight:600">Selected:</span> <span class="filename"></span><span style="margin-left:auto"></span><a class="btn small outline change" href="#lib-discovery">Change</a><button class="btn small outline remove" type="button">Remove</button></div>
-  </article>
+  <!-- NEW REQUIRED DOCUMENT LIST -->
+<div id="docList">
+  <div class="doc-row" data-open="#lib-discovery" data-doc="discovery">
+    <span>Discovery Documents</span>
+    <span class="status">Not uploaded</span>
+  </div>
 
-  <article class="doc-card" id="complaint">
-    <div class="doc-hd">
-      <div class="doc-title">Complaint or Case Filing</div>
-      <div class="doc-meta">No files yet</div>
-    </div>
-    <div class="actions">
-      <a class="btn" href="#lib-complaint">Select From Library</a>
-    </div>
-    <div class="dropzone"><label><input type="file"><div class="dz-title">Upload file</div><div class="dz-sub">PDF, JPEG or PNG (≤ 15MB)</div></label></div>
-    <div class="selected hidden"><span class="label" style="font-weight:600">Selected:</span> <span class="filename"></span><span style="margin-left:auto"></span><a class="btn small outline change" href="#lib-complaint">Change</a><button class="btn small outline remove" type="button">Remove</button></div>
-  </article>
+  <div class="doc-row" data-open="#lib-complaint" data-doc="complaint">
+    <span>Complaint / Filing</span>
+    <span class="status">Not uploaded</span>
+  </div>
 
-  <article class="doc-card" id="docket">
-    <div class="doc-hd">
-      <div class="doc-title">Case Docket</div>
-      <div class="doc-meta">2 on file</div>
-    </div>
-    <div class="actions">
-      <a class="btn" href="#lib-docket">Select From Library</a>
-    </div>
-    <div class="dropzone"><label><input type="file"><div class="dz-title">Upload file</div><div class="dz-sub">PDF, JPEG or PNG (≤ 15MB)</div></label></div>
-    <div class="selected hidden"><span class="label" style="font-weight:600">Selected:</span> <span class="filename"></span><span style="margin-left:auto"></span><a class="btn small outline change" href="#lib-docket">Change</a><button class="btn small outline remove" type="button">Remove</button></div>
-  </article>
+  <div class="doc-row" data-open="#lib-docket" data-doc="docket">
+    <span>Case Docket</span>
+    <span class="status">Not uploaded</span>
+  </div>
 
-  <article class="doc-card" id="otherdocs">
-    <div class="doc-hd">
-      <div class="doc-title">Other Document Types</div>
-      <div class="doc-meta">Upload any supporting files</div>
-    </div>
- 
-    <div class="dropzone">
-      <label>
-        <input type="file">
-        <div class="dz-title">Upload file</div>
-        <div class="dz-sub">PDF, JPEG, PNG, DOCX, XLSX (≤ 15MB)</div>
-      </label>
-    </div>
-    <div class="selected hidden">
-      <span class="label" style="font-weight:600">Selected:</span>
-      <span class="filename"></span>
-      <span style="margin-left:auto"></span>
-      <a class="btn small outline change" href="#lib-otherdocs">Change</a>
-      <button class="btn small outline remove" type="button">Remove</button>
-    </div>
-</article>
+  <div class="doc-row" data-open="#lib-otherdocs" data-doc="otherdocs">
+    <span>Other Supporting Documents (Optional)</span>
+    <span class="status">Optional</span>
+  </div>
+</div>
+
+
 
 </div>
 <!-- MINI POPUP -->
@@ -462,13 +529,19 @@
 
       <div class="divider">or upload new</div>
 
-      <div class="dropzone">
-        <label>
-          <input type="file">
-          <div class="dz-title">Upload file</div>
-          <div class="dz-sub">PDF/JPEG/PNG/DOCX/XLSX • ≤ 15MB</div>
-        </label>
-      </div>
+     <div class="dropzone">
+  <label>
+    <input type="file" class="file-upload-input">
+    <div class="dz-title">Upload file</div>
+    <div class="dz-sub">PDF/JPEG/PNG/DOCX/XLSX • ≤ 15MB</div>
+  </label>
+
+  <!-- Editable filename UI + confirm -->
+  <input type="text" class="filename-input hidden">
+  <button class="confirm-upload-btn hidden">Continue</button>
+  <div class="loader"></div>
+</div>
+
     </div>
 
   </aside>
@@ -484,7 +557,19 @@
     <div class="body">
       <div class="empty">No Complaint or Case Filing found</div>
       <div class="divider">upload new</div>
-      <div class="dropzone"><label><input type="file"><div class="dz-title">Upload complaint</div><div class="dz-sub">PDF/JPEG/PNG • ≤ 15MB</div></label></div>
+      <div class="dropzone">
+  <label>
+    <input type="file" class="file-upload-input">
+    <div class="dz-title">Upload complaint</div>
+    <div class="dz-sub">PDF/JPEG/PNG • ≤ 15MB</div>
+  </label>
+
+  <!-- Editable filename UI + confirm -->
+  <input type="text" class="filename-input hidden">
+  <button class="confirm-upload-btn hidden">Continue</button>
+  <div class="loader"></div>
+</div>
+
     </div>
   </aside>
 </div>
@@ -501,7 +586,19 @@
         <div class="item"><div>CaseDocket_2023_Q2.pdf<br><span class="meta">Jun 3, 2023 • 1.2MB</span></div><span class="badge">Choose</span></div>
       </div>
       <div class="divider">or upload the latest docket</div>
-      <div class="dropzone"><label><input type="file"><div class="dz-title">Upload latest docket</div><div class="dz-sub">PDF/JPEG/PNG • ≤ 15MB</div></label></div>
+      <div class="dropzone">
+  <label>
+    <input type="file" class="file-upload-input">
+    <div class="dz-title">Upload latest docket</div>
+    <div class="dz-sub">PDF/JPEG/PNG • ≤ 15MB</div>
+  </label>
+
+  <!-- Editable filename UI + confirm -->
+  <input type="text" class="filename-input hidden">
+  <button class="confirm-upload-btn hidden">Continue</button>
+  <div class="loader"></div>
+</div>
+
     </div>
   </aside>
 </div>
@@ -536,98 +633,110 @@
       <div class="divider">or upload a new file</div>
 
       <div class="dropzone">
-        <label>
-          <input type="file">
-          <div class="dz-title">Upload discovery file</div>
-          <div class="dz-sub">PDF/JPEG/PNG • ≤ 15MB</div>
-        </label>
-      </div>
+  <label>
+    <input type="file" class="file-upload-input">
+    <div class="dz-title">Upload discovery file</div>
+    <div class="dz-sub">PDF/JPEG/PNG • ≤ 15MB</div>
+  </label>
+
+  <!-- Editable filename UI + confirm -->
+  <input type="text" class="filename-input hidden">
+  <button class="confirm-upload-btn hidden">Continue</button>
+  <div class="loader"></div>
+</div>
+
     </div>
   </aside>
 </div>
 
-
 <script>
-(function(){
-  function mapOverlayToCardId(overlay){
-    return (overlay.getAttribute('id')||'').replace('lib-','');
-  }
-  function showSelection(cardId, filename){
-    var card=document.getElementById(cardId); if(!card) return;
-    var dz=card.querySelector('.dropzone');
-    var selected=card.querySelector('.selected');
-    if(selected){ selected.classList.remove('hidden'); selected.querySelector('.filename').textContent=filename; }
-    if(dz){ dz.classList.add('hidden'); }
-  }
-  function clearSelection(card){
-    var dz=card.querySelector('.dropzone');
-    var selected=card.querySelector('.selected');
-    if(selected){ selected.classList.add('hidden'); selected.querySelector('.filename').textContent=''; }
-    if(dz){ dz.classList.remove('hidden'); var input=dz.querySelector('input[type=file]'); if(input) input.value=''; }
-  }
-
-  // OPEN overlays without updating the URL hash (prevents :target from keeping drawers open)
-  document.querySelectorAll('a[href^="#lib-"]').forEach(function(a){
-    a.addEventListener('click',function(e){
-      e.preventDefault();
-      var id=a.getAttribute('href').slice(1);
-      var ov=document.getElementById(id);
-      if(ov) ov.classList.add('active');
-    });
+// ------------------------------
+// Drawer Controls
+// ------------------------------
+document.querySelectorAll('[data-open]').forEach(row => {
+  row.addEventListener('click', () => {
+    const docId = row.dataset.doc;
+    if (docId === 'otherdocs') {
+      document.getElementById('mini-popup').classList.add('active');
+      return;
+    }
+    document.querySelector(row.dataset.open).classList.add('active');
   });
-
-  // CLOSE overlays via close button
-  document.querySelectorAll('.overlay .close').forEach(function(btn){
-    btn.addEventListener('click',function(){
-      var ov = btn.closest('.overlay');
-      if(ov) ov.classList.remove('active');
-    });
-  });
-
-  // CLOSE overlays when clicking the dimmed background
-  document.querySelectorAll('.overlay').forEach(function(ov){
-    ov.addEventListener('click', function(e){
-      if(e.target === ov){ ov.classList.remove('active'); }
-    });
-  });
-
-  // CHOOSE FROM LIBRARY
-  document.querySelectorAll('.overlay .list .item').forEach(function(item){
-    item.addEventListener('click',function(){
-      var overlay=item.closest('.overlay');
-      var cardId=mapOverlayToCardId(overlay);
-      var filename=item.innerText.split('\n')[0].trim();
-      showSelection(cardId, filename);
-      // Close the drawer immediately after choosing
-      overlay.classList.remove('active');
-    });
-  });
-
-  // UPLOAD: reflect selection on change
-  document.querySelectorAll('.doc-card .dropzone input[type=file]').forEach(function(input){
-    input.addEventListener('change',function(){
-      if(input.files && input.files[0]){ showSelection(input.closest('.doc-card').id, input.files[0].name); }
-    });
-  });
-
-  // REMOVE selections
-  document.querySelectorAll('.doc-card .selected .remove').forEach(function(btn){
-    btn.addEventListener('click',function(){ clearSelection(btn.closest('.doc-card')); });
-  });
-})();
-
-// --- CUSTOM: Other Document Types upload popup ---
-document.querySelector('#otherdocs .dropzone').addEventListener('click', function(e){
-  e.preventDefault();   // prevent real file input from opening
-  e.stopPropagation();
-  document.getElementById('mini-popup').classList.add('active');
 });
 
-// Close popup
-document.querySelector('#mini-popup .mini-close').addEventListener('click', function(){
-  document.getElementById('mini-popup').classList.remove('active');
+document.querySelectorAll('.overlay').forEach(ov => {
+  ov.addEventListener('click', e => {
+    if (e.target === ov) ov.classList.remove('active');
+  });
 });
 
+document.querySelectorAll('[data-close]').forEach(btn => {
+  btn.addEventListener('click', () => btn.closest('.overlay').classList.remove('active'));
+});
+
+// ------------------------------
+// Choose from Library
+// ------------------------------
+document.querySelectorAll('.overlay .item .badge').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const overlay = btn.closest('.overlay');
+    const filename = btn.parentNode.innerText.split('\n')[0].trim();
+    applySuccessState(overlay, filename);
+  });
+});
+
+// ------------------------------
+// Upload with editable name
+// ------------------------------
+document.querySelectorAll('.file-upload-input').forEach(input => {
+  input.addEventListener('change', () => {
+    const file = input.files[0];
+    if (!file) return;
+
+    const overlay = input.closest('.overlay');
+    const nameField = overlay.querySelector('.filename-input');
+    const uploadButton = overlay.querySelector('.confirm-upload-btn');
+    const loader = overlay.querySelector('.loader');
+
+    nameField.value = file.name;
+    nameField.classList.remove('hidden');
+    uploadButton.classList.remove('hidden');
+
+    uploadButton.onclick = () => {
+      uploadButton.classList.add('hidden');
+      nameField.classList.add('hidden');
+      loader.style.display = 'block';
+
+      setTimeout(() => {
+        loader.style.display = 'none';
+        applySuccessState(overlay, nameField.value.trim());
+      }, 1000);
+    };
+  });
+});
+
+
+// ------------------------------
+// Apply green check & close overlay
+// ------------------------------
+function applySuccessState(overlay, filename) {
+  const docId = overlay.id.replace('lib-', '');
+  const row = document.querySelector(`.doc-row[data-doc="${docId}"]`);
+  if (!row) return;
+
+  row.classList.add('success');
+  row.querySelector('.status').innerText = filename + ' ✓';
+  overlay.classList.remove('active');
+}
+
+// ------------------------------
+// Popup Logic Other Docs
+// ------------------------------
+document.querySelector('#mini-popup .mini-close').addEventListener('click', () =>
+  document.getElementById('mini-popup').classList.remove('active')
+);
 </script>
+
+
 </body>
 </html>
