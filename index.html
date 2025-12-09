@@ -399,6 +399,32 @@
   font-weight: 600;
   color: var(--muted);
 }
+/* NEXT & SKIP BUTTONS */
+.nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 32px;
+}
+
+.nav-btn {
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+}
+
+.nav-btn.skip {
+  background: #fff;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+}
+
+.nav-btn.next {
+  background: var(--accent);
+  color: #fff;
+}
 
 /* Success state */
 .doc-row.success {
@@ -489,6 +515,11 @@
   </div>
 </div>
 
+<!-- NAVIGATION BUTTONS -->
+<div class="nav-buttons">
+  <button class="nav-btn skip" onclick="window.location.href='skip.html'">Skip for Now</button>
+  <button class="nav-btn next" onclick="window.location.href='next.html'">Next →</button>
+</div>
 
 
 </div>
